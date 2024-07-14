@@ -38,3 +38,16 @@ async def issue_book_to_user(request: Request, issue_model: BookIssueModel, book
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only librarian can issue book")
     
+@book_router.patch("/return/{book_isbn}")
+async def book_returned_by_user(request: Request, issue_model: BookIssueModel, book_isbn: str, session: AsyncSession = Depends(get_session)):
+    user = request.state.user
+    
+    if user.role == 1:
+        book = await book_services.return_book(user_uid=issue_model.user_uid, book_isbn=book_isbn, session=session)
+        
+        if book:
+            return book
+        else:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Something went wrong")
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only librarian can access book returns")
