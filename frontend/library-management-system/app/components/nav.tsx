@@ -2,8 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { BookIcon } from 'lucide-react';
-import { Input } from "@/components/ui/input"
-import { SearchIcon } from 'lucide-react';
+import SearchBar from './searchbar';
 
 const Navbar = () => {
   return (
@@ -26,11 +25,7 @@ const Navbar = () => {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <h1 className="text-5xl font-bold">Unlock the World of Books</h1>
             <p className="text-xl">Explore our vast collection of books and find your perfect match.</p>
-            <div className="flex justify-center gap-4">
-              <Input type="search" placeholder="Author (e.g: Dan Brown)" className="flex-2 max-w-xs" />
-              <Input type="search" placeholder="Title (e.g: Da Vinci Code)" className="flex-2 max-w-xs" />
-              <Button className="bg-neutral-900 border-solid border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/90 hover:text-neutral-900 focus:ring-primary"><SearchIcon></SearchIcon></Button>
-            </div>
+            <SearchBar/>
           </div>
         </section>
         </main>
