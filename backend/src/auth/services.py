@@ -1,4 +1,4 @@
-from sqlmodel import select
+from sqlmodel import or_, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.auth.models import User
 from src.auth.schemas import UserCreateModel
@@ -22,12 +22,11 @@ class UserServices:
         return user
 
     async def user_exists(self, session: AsyncSession, email: str = "", username: str = ""):
-        if email:
-            user = await self.get_user_by_email(email, session)
-        else:
-            user = await self.get_user_by_username(username, session)
+        statement = select(User).where(or_(User.username == username, User.email == email))
         
-        return True if user is not None else False
+        result = await session.execute(statement)
+        user = result.scalar()
+        return user
     
     async def create_user(self, user_data: UserCreateModel, session: AsyncSession):
         user_data_dict = user_data.model_dump()

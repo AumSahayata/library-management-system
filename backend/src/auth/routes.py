@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from src.auth.models import User
 from src.auth.utils import create_access_token
 from .services import UserServices
@@ -53,17 +53,24 @@ async def login_for_access_token(user: UserLoginModelEmail, session: AsyncSessio
     }
 
 @auth_router.post("/signup", response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(user_data: UserCreateModel, session: AsyncSession = Depends(get_session)):
-    email = user_data.email
+async def create_user(request: Request, user_data: UserCreateModel, session: AsyncSession = Depends(get_session)):
+    
+    user = request.state.user
+    
+    if user.role == 0:
+        email = user_data.email
+        username = user_data.username
 
-    user_exists = await user_services.user_exists(email, session)
+        user_exists = await user_services.user_exists(email= email, username=username, session=session)
 
-    if user_exists:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User with email already exists",
-        )
+        if user_exists:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User with email or username already exists",
+            )
 
-    await user_services.create_user(user_data, session)
+        await user_services.create_user(user_data, session)
 
-    return Response(content="successful", status_code=201)
+        return Response(content="successful", status_code=201)    
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only admin can create account")
