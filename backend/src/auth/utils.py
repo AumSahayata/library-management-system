@@ -54,3 +54,4 @@ def generate_password_hash(password: str) -> str:
 def verify_password(password: str, hash: str) -> bool:
     
     return password_context.verify(password, hash)
+

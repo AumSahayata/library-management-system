@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
+from src.auth.services import AuthServices
 from src.book.models import Book, BorrowedBooks
-from src.book.schemas import BookCreateModel, BookIssueModel
+from src.book.schemas import BookCreateModel, EmailSchema
+from src.book.utils import send_email
 
+auth_services = AuthServices()
 
 class BookServices:
     
@@ -40,7 +43,7 @@ class BookServices:
         return book
     
     async def get_borrowed_book_of_user(self, user_uid: str, session: AsyncSession):
-        statement = select(Book).select_from(Book).join(BorrowedBooks, BorrowedBooks.user_uid == user_uid)
+        statement = select(BorrowedBooks).where(BorrowedBooks.user_uid == user_uid)
         
         result = await session.execute(statement)
         books = result.scalars()
@@ -64,6 +67,18 @@ class BookServices:
             book_in_db.quantity -= 1
             
             await session.commit()
+            
+            user = await auth_services.get_user_by_uid(uid=user_uid, session=session)
+            user_email = user.email
+            
+            email_data = EmailSchema(
+                email=user_email,
+                subject=f"Successfully issued {book_in_db.book_name}",
+                body=f"Dear subscriber book: '{book_in_db.book_name}' was successfully issued on {issued_book.issue_date.date()} and it is to be returned on or before {issued_book.return_date.date()}'"
+            
+            )
+            send_email(email_data = email_data)
+            
             return book_in_db
         
         elif book.is_returned:

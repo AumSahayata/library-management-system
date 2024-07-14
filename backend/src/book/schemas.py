@@ -7,3 +7,8 @@ class BookCreateModel(BaseModel):
     
 class BookIssueModel(BaseModel):
     user_uid: str
+    
+class EmailSchema(BaseModel):
+    email: str
+    subject: str
+    body: str
