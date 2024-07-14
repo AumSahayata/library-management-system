@@ -33,8 +33,8 @@ const Submitbutton = () => {
 
 const Signup = () => {
   const [role, setRole] = useState(2);
-  console.log(role);
-  //   const signupformaction = signupaction.bind(null, isAdmin);
+  
+  //   const signupformaction = signupaction.bind(null, role);
   //   const [state, formAction] = useFormState(signupformaction, initialState);
   const state = { hello: "hi" };
 

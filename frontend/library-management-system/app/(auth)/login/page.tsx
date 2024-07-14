@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Loader } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-// import { loginaction } from "@/app/actions/authactions";
+import { loginaction } from "@/app/actions/authactions";
 
 import Link from "next/link";
 
@@ -32,8 +32,8 @@ const Submitbutton = () => {
 
 const LoginPage = () => {
   const params = useSearchParams();
-  // const [state,formAction] = useFormState(loginaction,initialState)
-  const state = { hello: "hi" };
+  const [state,formAction] = useFormState(loginaction,initialState)
+
   return (
     <>
       <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
@@ -47,7 +47,7 @@ const LoginPage = () => {
                 Enter your username and password to access your account.
               </p>
             </div>
-            {/* <form action={formAction} className="space-y-4"> */}
+            <form action={formAction} className="space-y-4">
             {!(params.get("username") === "true") && (
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -101,7 +101,7 @@ const LoginPage = () => {
               )}
             </div>
             <Submitbutton />
-            {/* </form> */}
+            </form>
             <div className="text-center text-sm text-muted-foreground">
               <Link
                 href={
