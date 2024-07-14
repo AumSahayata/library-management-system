@@ -3,22 +3,21 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import getuserdetails from "./getuserdetails";
-
 import { z } from "zod";
+import getSession from "../utils/getSession";
 
 const MAX_AGE = 60 * 60 * 24 * 7;
 
-export const signupaction = async (
-  isAdmin: boolean,
-  prevState: any,
-  formdata: FormData
-) => {
+export const signupaction = async (prevState: any, formdata: FormData) => {
+  const authToken = getSession()?.value;
   const signupobject = z.object({
     first_name: z.string({ message: "First Name has to be characters only" }),
     last_name: z.string({ message: "Last Name has to be characters only" }),
+    address: z.string({ message: "Address is required" }),
+    phone_number: z.string().min(10, { message: "Enter 10 digit number" }),
+    username: z.string({ message: "Enter a username" }),
+    role: z.number({ message: "required" }),
     email: z.string().email({ message: "Enter valid email" }),
-    is_admin: z.boolean(),
     password: z
       .string()
       .min(8, { message: "Password needs to be longer than length 8" }),
@@ -29,7 +28,10 @@ export const signupaction = async (
     last_name: formdata.get("lastname")?.toString(),
     email: formdata.get("email")?.toString(),
     password: formdata.get("password")?.toString(),
-    is_admin: isAdmin,
+    role: Number(formdata.get("role")),
+    username: formdata.get("username")?.toString(),
+    address: formdata.get("address")?.toString(),
+    phone_number: formdata.get("contact")?.toString(),
   });
 
   if (!validatedFields.success) {
@@ -39,10 +41,11 @@ export const signupaction = async (
   console.log(validatedFields.data);
 
   try {
-    await fetch(`${process.env.BASE_URL}/api/user/signup`, {
+    await fetch(`${process.env.BASE_URL}/api/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
       },
       body: JSON.stringify(validatedFields.data),
     });
@@ -50,8 +53,7 @@ export const signupaction = async (
     console.log(error);
     throw new Error("Something went wrong");
   }
-
-  redirect("/login");
+  redirect("/admin-dashboard");
 };
 
 export const loginaction = async (prevState: any, formdata: FormData) => {
