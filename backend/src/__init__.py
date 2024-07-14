@@ -2,6 +2,7 @@ import re
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from src.auth.routes import auth_router
+from src.book.routes import book_router
 from src.auth.utils import decode_token
 
 app = FastAPI()
@@ -36,3 +37,4 @@ async def check_token(request: Request, call_next):
 
 
 app.include_router(auth_router, prefix = f"/api/auth", tags = "auth")
+app.include_router(book_router, prefix = f"/api/book", tags = "book")

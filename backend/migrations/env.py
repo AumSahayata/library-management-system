@@ -9,6 +9,7 @@ from alembic import context
 from sqlmodel import SQLModel
 from src.config import Config
 from src.auth.models import User
+from src.book.models import Book, BorrowedBooks
 
 database_url = Config.DATABASE_URL
 
