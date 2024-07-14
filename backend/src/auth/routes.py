@@ -81,8 +81,8 @@ async def get_all_users(request: Request, session: AsyncSession = Depends(get_se
     user = request.state.user
     
     if user.role == 0:
-        normal_users = await auth_services.get_users_by_role(role=1, session=session)
-        librarians = await auth_services.get_users_by_role(role=2, session=session)
+        normal_users = await auth_services.get_users_by_role(role=2, session=session)
+        librarians = await auth_services.get_users_by_role(role=1, session=session)
     
         return {"users":normal_users, "librarians":librarians}
     else:
