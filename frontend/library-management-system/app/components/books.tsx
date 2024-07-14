@@ -3,7 +3,7 @@ import Link from "next/link"
 
 const API_KEY = "AIzaSyD2-rIHZIVtE5n9JKmQT_xhqp7VZo91gWY"
 
-const getBooks = async (author: string, title: string) => {
+export const getBooks = async (author: string, title: string) => {
     try {
         let url
         if (title && author === undefined) {
