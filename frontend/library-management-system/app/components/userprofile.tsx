@@ -2,7 +2,7 @@ import React from 'react'
 import Link from "next/link"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import Nav from '@/app/components/nav'
+
 export default function UserProfile({data}) {
     console.log(data)
     function CalendarIcon(props) {
@@ -134,8 +134,8 @@ export default function UserProfile({data}) {
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-xl font-semibold">John Doe</h2>
-            <p className="text-muted-foreground text-sm">johndoe@example.com</p>
+            <h2 className="text-xl font-semibold">{data.first_name} {data.last_name}</h2>
+            <p className="text-muted-foreground text-sm">{data.email}</p>
           </div>
         </div>
         <Separator className="my-6" />
@@ -144,21 +144,21 @@ export default function UserProfile({data}) {
             <CalendarIcon className="h-5 w-5 text-muted-foreground" />
             <div>
               <p className="text-muted-foreground text-sm">Joined</p>
-              <p className="font-medium">2021-05-12</p>
+              <p className="font-medium">{data.created_at.split('T')[0]}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <MapPinIcon className="h-5 w-5 text-muted-foreground" />
             <div>
               <p className="text-muted-foreground text-sm">Address</p>
-              <p className="font-medium">123 Main St, Anytown USA</p>
+              <p className="font-medium">{data.address}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <PhoneIcon className="h-5 w-5 text-muted-foreground" />
             <div>
               <p className="text-muted-foreground text-sm">Contact</p>
-              <p className="font-medium">(555) 555-5555</p>
+              <p className="font-medium">{data.phone_number}</p>
             </div>
           </div>
         </div>
