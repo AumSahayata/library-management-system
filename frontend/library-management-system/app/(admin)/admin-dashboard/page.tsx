@@ -51,7 +51,11 @@ export default async function AdminDashboard() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Admin</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <form action={logoutaction}>
+                    <button type='submit'>
                   <DropdownMenuItem>Logout</DropdownMenuItem>
+                  </button>
+                </form>
                 </DropdownMenuContent>
               </DropdownMenu>
                 <div>
