@@ -22,29 +22,35 @@ class BookServices:
         statement = select(Book).where(Book.isbn == book_isbn)
         
         result = await session.execute(statement)
-        user = result.scalar()
-        return user
+        book = result.scalar()
+        return book
     
     async def get_issued_book(self, user_uid: str, book_isbn: str, session: AsyncSession):
         statement = select(BorrowedBooks).where(BorrowedBooks.user_uid == user_uid, BorrowedBooks.book_isbn == book_isbn)
         
         result = await session.execute(statement)
-        user = result.scalar()
-        return user
+        book = result.scalar()
+        return book
     
     async def get_returned_book(self, user_uid: str, book_isbn: str, session: AsyncSession):
         statement = select(BorrowedBooks).where(BorrowedBooks.user_uid == user_uid, BorrowedBooks.book_isbn == book_isbn, BorrowedBooks.is_returned == False)
         
         result = await session.execute(statement)
-        user = result.scalar()
-        return user
+        book = result.scalar()
+        return book
+    
+    async def get_borrowed_book_of_user(self, user_uid: str, session: AsyncSession):
+        statement = select(Book).select_from(Book).join(BorrowedBooks, BorrowedBooks.user_uid == user_uid)
+        
+        result = await session.execute(statement)
+        books = result.scalars()
+        return books
     
     async def issue_book(self, user_uid: str, book_isbn: str, lib_uid: str,session: AsyncSession):
         
         book = await self.get_issued_book(user_uid=user_uid, book_isbn=book_isbn, session=session)
         
-        if not book and book.is_returned:
-        
+        if not book: 
             issued_book = BorrowedBooks()
             
             issued_book.book_isbn = book_isbn
@@ -60,6 +66,21 @@ class BookServices:
             await session.commit()
             return book_in_db
         
+        elif book.is_returned:
+            issued_book = BorrowedBooks()
+            
+            issued_book.book_isbn = book_isbn
+            issued_book.user_uid = user_uid
+            issued_book.issued_by = lib_uid
+            issued_book.return_date = datetime.today() + timedelta(days=15)
+            
+            session.add(issued_book)
+            
+            book_in_db = await self.get_book_by_isbn(book_isbn = book_isbn, session = session)
+            book_in_db.quantity -= 1
+            
+            await session.commit()
+            return book_in_db
         else:
             return None
         

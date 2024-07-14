@@ -1,4 +1,7 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+
+from src.book.models import Book
 from .services import BookServices
 from src.db.main import get_session
 from .schemas import BookCreateModel, BookIssueModel
@@ -51,3 +54,14 @@ async def book_returned_by_user(request: Request, issue_model: BookIssueModel, b
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Something went wrong")
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only librarian can access book returns")
+    
+@book_router.get("/borrowed", response_model=List[Book])
+async def get_borrowed_books(request: Request, session: AsyncSession = Depends(get_session)):
+    user = request.state.user
+    
+    if user:
+        user_uid = user.uid
+        books = await book_services.get_borrowed_book_of_user(user_uid=user_uid, session=session)
+        
+        if books:
+            return books
