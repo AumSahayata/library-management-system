@@ -1,7 +1,19 @@
 import React from 'react'
 import Link from "next/link"
+const API_KEY = "AIzaSyD2-rIHZIVtE5n9JKmQT_xhqp7VZo91gWY"
+const getBooks = async (author,title) => {
+    try {
+        const responses = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${title}+inauthor:${author}&key=${API_KEY}`)
+        const data = responses.json()
+        return data
+    } catch (error) {
+        
+    }
+}
 
-export default function Books() {
+export default async function Books({author,title}) {
+   const data = await getBooks(author,title)
+   console.log(data)
   return (
     <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
