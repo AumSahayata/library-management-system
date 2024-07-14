@@ -5,7 +5,7 @@ from src.auth.schemas import UserCreateModel
 from src.auth.utils import generate_password_hash, verify_password
 
 
-class UserServices:
+class AuthServices:
     
     async def get_user_by_email(self, email: str, session: AsyncSession):
         statement = select(User).where(User.email == email)
@@ -20,6 +20,13 @@ class UserServices:
         result = await session.execute(statement)
         user = result.scalar()
         return user
+    
+    async def get_users_by_role(self, role: int, session: AsyncSession):
+        statement = select(User).where(User.role == role)
+        
+        result = await session.execute(statement)
+        users = result.scalars()
+        return users
 
     async def user_exists(self, session: AsyncSession, email: str = "", username: str = ""):
         statement = select(User).where(or_(User.username == username, User.email == email))
