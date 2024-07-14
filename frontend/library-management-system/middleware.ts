@@ -14,7 +14,10 @@ export async function middleware(request: NextRequest) {
   const sessionData = getSession();
   const userdetails = await getuserdetails();
 
-  if (userdetails?.role === 0 && request.nextUrl.pathname!=='/admin-dashboard') {
+  if (userdetails?.role === 0 && ['/'].includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+  }
+  if (userdetails?.role === 1 && ['/signup','/'].includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/admin-dashboard", request.url));
   }
   if (isProtected(request.nextUrl.pathname) && !userdetails) {
