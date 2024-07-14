@@ -16,7 +16,7 @@ const Navbar = () => {
       </Link>
     </div>
     <div className="flex items-center gap-4">
-      <Link href="/sign-up">
+      <Link href="/login">
         <Button className="bg-neutral-900 border-solid border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/90 hover:text-neutral-900 focus:ring-primary">Sign In</Button>
       </Link>
     </div>
