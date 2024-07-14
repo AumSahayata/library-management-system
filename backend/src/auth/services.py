@@ -3,6 +3,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from src.auth.models import User
 from src.auth.schemas import UserCreateModel
 from src.auth.utils import generate_password_hash, verify_password
+from src.book.schemas import EmailSchema
+from src.book.utils import send_email
 
 
 class AuthServices:
@@ -52,6 +54,14 @@ class AuthServices:
         new_user.password_hash = generate_password_hash(user_data_dict['password'])
         
         session.add(new_user)
+        
+        email_data = EmailSchema(
+            email=new_user.email,
+            subject=f"Welcome to the library",
+            body=f"Your library account has been created and you are free to use all your services.\nUsername: {user_data_dict['username']} \nPassword: {user_data_dict['password']}"
+        )
+        
+        send_email(email_data=email_data)
         
         await session.commit()
         
