@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
     userdetails?.role === 1 &&
     ["/signup", "/"].includes(request.nextUrl.pathname)
   ) {
-    return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+    return NextResponse.redirect(new URL("/librarian", request.url));
   }
   if (isProtected(request.nextUrl.pathname) && !userdetails) {
     return NextResponse.redirect(new URL("/login", request.url));

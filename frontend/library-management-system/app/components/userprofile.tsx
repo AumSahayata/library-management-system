@@ -3,7 +3,16 @@ import Link from "next/link"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 
-export default function UserProfile({data}) {
+const getBookData = (borrowed)=>{
+    try{
+
+    }catch(error){
+
+    }
+}
+
+export default function UserProfile({data,borrowed}) {
+
     console.log(data)
     function CalendarIcon(props) {
   return (
