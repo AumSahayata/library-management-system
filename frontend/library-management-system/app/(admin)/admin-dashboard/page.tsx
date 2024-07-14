@@ -2,8 +2,39 @@ import React from 'react'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import ManageAccounts from '@/app/components/manageaccounts'
+import getSession from '@/app/utils/getSession'
+import { logoutaction } from '@/app/actions/authactions'
 
-export default function AdminDashboard() {
+const getUserData = async () => {
+    try {
+        console.log('test')
+      const authToken = getSession()?.value;
+      if (!authToken) {
+        logoutaction();
+        return null;
+      }
+  
+      const response = await fetch(
+        `${process.env.BASE_URL}/api/auth/users`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      const data = await response.json();
+  
+      return data;
+    } catch (error) {
+      console.log(error);
+    //   toast.error("Some error occured!! Please refresh.");
+    }
+  };
+
+export default async function AdminDashboard() {
+ const response = await getUserData()
+ console.log(response)
     return (
         <div className="flex flex-col min-h-screen bg-muted/40">
           <header className="bg-background px-6 py-6 border-b">
@@ -32,7 +63,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           </header>
-          <ManageAccounts/>
+          <ManageAccounts  users={response.users} librarians={response.librarians}/>
         </div>
       )
 }
