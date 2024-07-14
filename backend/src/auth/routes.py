@@ -100,3 +100,19 @@ async def get_user_info(request: Request, session: AsyncSession = Depends(get_se
         return user
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
+    
+@auth_router.get("/{username}", response_model=User)
+async def get_user(request: Request, username: str, session: AsyncSession = Depends(get_session)):
+    
+    user = request.state.user
+    
+    if user.role == 1:
+        user = await auth_services.get_user_by_username(username=username, session=session)
+        
+        if user:
+            return user
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only librarian can access all users")
+
