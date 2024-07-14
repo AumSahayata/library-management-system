@@ -84,4 +84,19 @@ async def get_all_users(request: Request, session: AsyncSession = Depends(get_se
         normal_users = await auth_services.get_users_by_role(role=1, session=session)
         librarians = await auth_services.get_users_by_role(role=2, session=session)
     
-    return {"users":normal_users, "librarians":librarians}
+        return {"users":normal_users, "librarians":librarians}
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only admin can access all users")
+
+
+@auth_router.get("/info", response_model=User)
+async def get_user_info(request: Request, session: AsyncSession = Depends(get_session)):
+    user = request.state.user
+    
+    if user:
+        user_uid = user.uid
+        user = await auth_services.get_user_by_uid(user_uid, session)
+        
+        return user
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")

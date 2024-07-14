@@ -27,6 +27,13 @@ class AuthServices:
         result = await session.execute(statement)
         users = result.scalars()
         return users
+    
+    async def get_user_by_uid(self, uid: str, session: AsyncSession):
+        statement = select(User).where(User.uid == uid)
+        
+        result = await session.execute(statement)
+        users = result.scalar()
+        return users
 
     async def user_exists(self, session: AsyncSession, email: str = "", username: str = ""):
         statement = select(User).where(or_(User.username == username, User.email == email))
